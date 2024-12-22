@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom"; // Importujeme useParams
 import { shoppingListData } from "../data"; // Import dat
+import { useLanguage } from "../context/LanguageContext"; // Import jazykového kontextu
 import "./ShoppingListDetail.css"; // Import CSS
 
 function ShoppingListDetail() {
@@ -15,10 +16,11 @@ function ShoppingListDetail() {
   const [newItemName, setNewItemName] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
   const [showOnlyUnresolved, setShowOnlyUnresolved] = useState(false);
+  const { translate } = useLanguage(); // Použití funkce pro překlad
 
   // Pokud seznam neexistuje, zobrazíme chybovou hlášku
   if (!foundShoppingList) {
-    return <p>Seznam nenalezen!</p>;
+    return <p>{translate("listNotFound")}</p>;
   }
 
   // Přidání nové položky
@@ -83,16 +85,18 @@ function ShoppingListDetail() {
 
   return (
     <div className="shopping-list">
-      <h1>Nákupní seznam: {shoppingList.name}</h1>
+      <h1>{translate("shoppingList")}: {shoppingList.name}</h1>
 
-      <h2>Členové:</h2>
+      <h2>{translate("members")}</h2>
       <ul>
         {shoppingList.members &&
           shoppingList.members.map((member) => (
             <li key={member}>
               {member}
               {shoppingList.owner === "user123" && member !== "user123" && (
-                <button onClick={() => removeMember(member)}>Odebrat</button>
+                <button onClick={() => removeMember(member)}>
+                  {translate("removeMember")}
+                </button>
               )}
             </li>
           ))}
@@ -104,13 +108,13 @@ function ShoppingListDetail() {
             type="text"
             value={newMemberName}
             onChange={(e) => setNewMemberName(e.target.value)}
-            placeholder="Přidat člena"
+            placeholder={translate("addMember")}
           />
-          <button onClick={addMember}>Přidat člena</button>
+          <button onClick={addMember}>{translate("addMember")}</button>
         </div>
       )}
 
-      <h2>Položky:</h2>
+      <h2>{translate("items")}</h2>
       <div>
         <label>
           <input
@@ -118,7 +122,7 @@ function ShoppingListDetail() {
             checked={showOnlyUnresolved}
             onChange={() => setShowOnlyUnresolved(!showOnlyUnresolved)}
           />
-          Zobrazit pouze nevyřešené položky
+          {translate("unresolvedItems")}
         </label>
       </div>
       <ul>
@@ -128,21 +132,21 @@ function ShoppingListDetail() {
               {item.name}
             </span>
             <button onClick={() => toggleItemResolved(item.id)}>
-              {item.resolved ? "Neoznačit jako vyřešené" : "Označit jako vyřešené"}
+              {item.resolved ? translate("markUnresolved") : translate("markResolved")}
             </button>
-            <button onClick={() => removeItem(item.id)}>Odebrat</button>
+            <button onClick={() => removeItem(item.id)}>{translate("removeItem")}</button>
           </li>
         ))}
       </ul>
 
-      <h2>Přidat novou položku:</h2>
+      <h2>{translate("addItem")}</h2>
       <input
         type="text"
         value={newItemName}
         onChange={(e) => setNewItemName(e.target.value)}
-        placeholder="Název položky"
+        placeholder={translate("addItemPlaceholder")}
       />
-      <button onClick={addItem}>Přidat</button>
+      <button onClick={addItem}>{translate("add")}</button>
     </div>
   );
 }

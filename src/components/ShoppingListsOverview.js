@@ -1,6 +1,7 @@
 // src/components/ShoppingListsOverview.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useLanguage } from '../context/LanguageContext'; // Import jazykového kontextu
 import './ShoppingListsOverview.css';
 
 const defaultShoppingLists = [
@@ -14,7 +15,20 @@ function ShoppingListsOverview() {
   const [newListName, setNewListName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showArchived, setShowArchived] = useState(false); // Přidání stavu pro filtrování
+  const { translate } = useLanguage(); // Použití funkce pro překlad
   const navigate = useNavigate();
+
+  // Lokalizované texty pomocí funkce translate
+  const heading = translate("shoppingListsOverview");
+  const showArchivedLabel = translate("showArchived");
+  const addListLabel = translate("addNewList");
+  const viewDetailLabel = translate("shoppingList");
+  const deleteLabel = translate("delete"); // Používáme "Smazat" nebo "Delete" podle jazyka
+  const confirmDelete = translate("confirmDelete");
+  const modalHeading = translate("modalHeading");
+  const placeholder = translate("placeholder");
+  const addButton = translate("add");
+  const closeButton = translate("close");
 
   // Přidání nového seznamu
   const addShoppingList = () => {
@@ -33,7 +47,7 @@ function ShoppingListsOverview() {
 
   // Odebrání seznamu (jen vlastník může odebrat)
   const deleteShoppingList = (listId) => {
-    if (window.confirm("Opravdu chcete odebrat tento seznam?")) {
+    if (window.confirm(confirmDelete)) {
       setShoppingLists(shoppingLists.filter(list => list.id !== listId));
     }
   };
@@ -45,7 +59,7 @@ function ShoppingListsOverview() {
 
   return (
     <div className="shopping-lists-overview">
-      <h1>Přehled nákupních seznamů</h1>
+      <h1>{heading}</h1>
 
       {/* Checkbox pro filtrování archivovaných seznamů */}
       <div>
@@ -55,7 +69,7 @@ function ShoppingListsOverview() {
             checked={showArchived}
             onChange={() => setShowArchived(!showArchived)}
           />
-          Zobrazit i archivované seznamy
+          {showArchivedLabel}
         </label>
       </div>
 
@@ -64,31 +78,31 @@ function ShoppingListsOverview() {
           <div key={list.id} className="shopping-list-tile">
             <h3>{list.name}</h3>
             <button onClick={() => navigate(`/shopping-list/${list.id}`)}>
-              Zobrazit detail
+              {viewDetailLabel}
             </button>
             {list.owner === "user123" && (
               <button onClick={() => deleteShoppingList(list.id)}>
-                Odebrat
+                {deleteLabel}
               </button>
             )}
           </div>
         ))}
       </div>
 
-      <button onClick={() => setIsModalOpen(true)}>Přidat nový seznam</button>
+      <button onClick={() => setIsModalOpen(true)}>{addListLabel}</button>
 
       {isModalOpen && (
         <div className="modal">
           <div className="modal-content">
-            <h2>Přidat nový nákupní seznam</h2>
+            <h2>{modalHeading}</h2>
             <input
               type="text"
               value={newListName}
               onChange={(e) => setNewListName(e.target.value)}
-              placeholder="Název nákupního seznamu"
+              placeholder={placeholder}
             />
-            <button onClick={addShoppingList}>Přidat</button>
-            <button onClick={() => setIsModalOpen(false)}>Zavřít</button>
+            <button onClick={addShoppingList}>{addButton}</button>
+            <button onClick={() => setIsModalOpen(false)}>{closeButton}</button>
           </div>
         </div>
       )}
