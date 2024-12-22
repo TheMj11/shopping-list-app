@@ -1,0 +1,41 @@
+{
+  "shoppingLists": [
+    {
+      "id": "1",
+      "name": "Týdenní nákup",
+      "items": [
+        {
+          "id": 1,
+          "name": "Mléko",
+          "resolved": false
+        },
+        {
+          "id": 2,
+          "name": "Chléb",
+          "resolved": true
+        },
+        {
+          "id": 3,
+          "name": "Džus",
+          "resolved": false
+        }
+      ]
+    },
+    {
+      "id": "2",
+      "name": "Party nákup",
+      "items": [
+        {
+          "id": 1,
+          "name": "Cola",
+          "resolved": false
+        },
+        {
+          "id": 2,
+          "name": "Chipsy",
+          "resolved": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,5 @@
 import React, { createContext, useState, useContext } from 'react';
 
-// Texty v češtině a angličtině
-// src/context/LanguageContext.js
-// src/context/LanguageContext.js
 const translations = {
   cs: {
     shoppingListsOverview: "Přehled nákupních seznamů",
@@ -26,7 +23,7 @@ const translations = {
     removeItem: "Odebrat položku",
     removeMember: "Odebrat člena",
     addItemPlaceholder: "Název položky",
-    toggleTheme: "Přepnout na tmavý režim", // Text pro přepínání tmavého režimu
+    toggleTheme: "Přepnout na tmavý režim",
   },
   en: {
     shoppingListsOverview: "Shopping Lists Overview",
@@ -50,17 +47,15 @@ const translations = {
     removeItem: "Remove Item",
     removeMember: "Remove Member",
     addItemPlaceholder: "Item Name",
-    toggleTheme: "Switch to Dark Mode", // Text pro přepínání tmavého režimu v angličtině
+    toggleTheme: "Switch to Dark Mode",
   },
 };
 
 
-// Kontext
 const LanguageContext = createContext();
 
-// Poskytovatel kontextu
 export const LanguageProvider = ({ children }) => {
-  const [language, setLanguage] = useState("cs"); // Výchozí jazyk je čeština
+  const [language, setLanguage] = useState("cs");
 
   const translate = (key) => translations[language][key] || key;
 
@@ -71,5 +66,4 @@ export const LanguageProvider = ({ children }) => {
   );
 };
 
-// Hook pro snadné použití kontextu
 export const useLanguage = () => useContext(LanguageContext);

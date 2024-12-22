@@ -1,58 +1,78 @@
-// src/components/ShoppingListsOverview.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useLanguage } from '../context/LanguageContext'; // Import jazykového kontextu
+import { useLanguage } from '../context/LanguageContext';
 import './ShoppingListsOverview.css';
 
-const defaultShoppingLists = [
-  { id: 1, name: "Týdenní nákup", owner: "user123", archived: false },
-  { id: 2, name: "Party nákup", owner: "user456", archived: false },
-  { id: 3, name: "Zimní dovolená", owner: "user123", archived: true }
-];
-
 function ShoppingListsOverview() {
-  const [shoppingLists, setShoppingLists] = useState(defaultShoppingLists);
+  const [shoppingLists, setShoppingLists] = useState([]);
   const [newListName, setNewListName] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [showArchived, setShowArchived] = useState(false); // Přidání stavu pro filtrování
-  const { translate } = useLanguage(); // Použití funkce pro překlad
+  const [showArchived, setShowArchived] = useState(false);
+  const { translate } = useLanguage();
   const navigate = useNavigate();
 
-  // Lokalizované texty pomocí funkce translate
   const heading = translate("shoppingListsOverview");
   const showArchivedLabel = translate("showArchived");
   const addListLabel = translate("addNewList");
   const viewDetailLabel = translate("shoppingList");
-  const deleteLabel = translate("delete"); // Používáme "Smazat" nebo "Delete" podle jazyka
+  const deleteLabel = translate("delete");
   const confirmDelete = translate("confirmDelete");
   const modalHeading = translate("modalHeading");
   const placeholder = translate("placeholder");
   const addButton = translate("add");
   const closeButton = translate("close");
 
-  // Přidání nového seznamu
+  useEffect(() => {
+    fetch("http://localhost:3001/shoppingLists")
+      .then((response) => response.json())
+      .then((data) => setShoppingLists(data))
+      .catch((error) => console.error("Error fetching shopping lists:", error));
+  }, []);
+
   const addShoppingList = () => {
     if (newListName.trim() !== "") {
       const newList = {
         id: shoppingLists.length + 1,
         name: newListName,
         owner: "user123",
-        archived: false
+        archived: false,
+        items: [],
       };
+
       setShoppingLists([...shoppingLists, newList]);
+
+      fetch("http://localhost:3001/shoppingLists", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(newList),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to add shopping list");
+          }
+          return response.json();
+        })
+        .catch((error) => console.error("Error adding shopping list:", error));
+
       setNewListName("");
       setIsModalOpen(false);
     }
   };
 
-  // Odebrání seznamu (jen vlastník může odebrat)
   const deleteShoppingList = (listId) => {
     if (window.confirm(confirmDelete)) {
-      setShoppingLists(shoppingLists.filter(list => list.id !== listId));
+      setShoppingLists(shoppingLists.filter((list) => list.id !== listId));
+
+      fetch(`http://localhost:3001/shoppingLists/${listId}`, {
+        method: "DELETE",
+      }).catch((error) =>
+        console.error("Error deleting shopping list:", error)
+      );
     }
   };
 
-  // Filtrování seznamů podle archivace
   const filteredShoppingLists = shoppingLists.filter(
     (list) => showArchived || !list.archived
   );
@@ -61,7 +81,6 @@ function ShoppingListsOverview() {
     <div className="shopping-lists-overview">
       <h1>{heading}</h1>
 
-      {/* Checkbox pro filtrování archivovaných seznamů */}
       <div>
         <label>
           <input

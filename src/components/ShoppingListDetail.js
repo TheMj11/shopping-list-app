@@ -1,29 +1,25 @@
-// src/components/ShoppingListDetail.js
-import React, { useState } from "react";
-import { useParams } from "react-router-dom"; // Importujeme useParams
-import { shoppingListData } from "../data"; // Import dat
-import { useLanguage } from "../context/LanguageContext"; // Import jazykového kontextu
-import "./ShoppingListDetail.css"; // Import CSS
+import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext";
+import "./ShoppingListDetail.css";
 
 function ShoppingListDetail() {
-  const { id } = useParams(); // Získání ID seznamu z URL
-  const foundShoppingList = shoppingListData.find(
-    (list) => list.id.toString() === id
-  ); // Najdeme seznam podle ID
-
-  // Stavy jsou definované vždy, i když seznam neexistuje
-  const [shoppingList, setShoppingList] = useState(foundShoppingList || {});
+  const { id } = useParams();
+  const { translate } = useLanguage();
+  const [shoppingList, setShoppingList] = useState(null);
   const [newItemName, setNewItemName] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
   const [showOnlyUnresolved, setShowOnlyUnresolved] = useState(false);
-  const { translate } = useLanguage(); // Použití funkce pro překlad
 
-  // Pokud seznam neexistuje, zobrazíme chybovou hlášku
-  if (!foundShoppingList) {
-    return <p>{translate("listNotFound")}</p>;
-  }
+  useEffect(() => {
+    fetch(`http://localhost:3001/shoppingLists/${id}`)
+      .then((response) => response.json())
+      .then((data) => setShoppingList(data))
+      .catch((error) =>
+        console.error("Error fetching shopping list detail:", error)
+      );
+  }, [id]);
 
-  // Přidání nové položky
   const addItem = () => {
     if (newItemName.trim() !== "") {
       const newItem = {
@@ -31,52 +27,104 @@ function ShoppingListDetail() {
         name: newItemName,
         resolved: false,
       };
-      setShoppingList({
+
+      const updatedList = {
         ...shoppingList,
         items: [...shoppingList.items, newItem],
-      });
+      };
+
+      setShoppingList(updatedList);
+
+      fetch(`http://localhost:3001/shoppingLists/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedList),
+      }).catch((error) => console.error("Error adding item:", error));
+
       setNewItemName("");
     }
   };
 
-  // Odebrání položky
   const removeItem = (itemId) => {
-    setShoppingList({
+    const updatedList = {
       ...shoppingList,
       items: shoppingList.items.filter((item) => item.id !== itemId),
-    });
+    };
+
+    setShoppingList(updatedList);
+
+    fetch(`http://localhost:3001/shoppingLists/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedList),
+    }).catch((error) => console.error("Error removing item:", error));
   };
 
-  // Přepnutí stavu položky (vyřešené/nevyřešené)
   const toggleItemResolved = (itemId) => {
-    setShoppingList({
+    const updatedList = {
       ...shoppingList,
       items: shoppingList.items.map((item) =>
         item.id === itemId ? { ...item, resolved: !item.resolved } : item
       ),
-    });
+    };
+
+    setShoppingList(updatedList);
+
+    fetch(`http://localhost:3001/shoppingLists/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedList),
+    }).catch((error) => console.error("Error toggling item resolved:", error));
   };
 
-  // Přidání nového člena
   const addMember = () => {
     if (shoppingList.owner === "user123" && newMemberName.trim() !== "") {
-      setShoppingList({
+      const updatedList = {
         ...shoppingList,
         members: [...shoppingList.members, newMemberName],
-      });
+      };
+
+      setShoppingList(updatedList);
+
+      fetch(`http://localhost:3001/shoppingLists/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedList),
+      }).catch((error) => console.error("Error adding member:", error));
+
       setNewMemberName("");
     }
   };
 
-  // Odebrání člena
   const removeMember = (memberName) => {
-    setShoppingList({
+    const updatedList = {
       ...shoppingList,
       members: shoppingList.members.filter((member) => member !== memberName),
-    });
+    };
+
+    setShoppingList(updatedList);
+
+    fetch(`http://localhost:3001/shoppingLists/${id}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedList),
+    }).catch((error) => console.error("Error removing member:", error));
   };
 
-  // Filtrování položek
+  if (!shoppingList) {
+    return <p>{translate("loading")}</p>;
+  }
+
   const filteredItems = shoppingList.items
     ? shoppingList.items.filter((item) =>
         showOnlyUnresolved ? !item.resolved : true
@@ -85,7 +133,9 @@ function ShoppingListDetail() {
 
   return (
     <div className="shopping-list">
-      <h1>{translate("shoppingList")}: {shoppingList.name}</h1>
+      <h1>
+        {translate("shoppingList")}: {shoppingList.name}
+      </h1>
 
       <h2>{translate("members")}</h2>
       <ul>
@@ -128,13 +178,19 @@ function ShoppingListDetail() {
       <ul>
         {filteredItems.map((item) => (
           <li key={item.id}>
-            <span style={{ textDecoration: item.resolved ? "line-through" : "none" }}>
+            <span
+              style={{ textDecoration: item.resolved ? "line-through" : "none" }}
+            >
               {item.name}
             </span>
             <button onClick={() => toggleItemResolved(item.id)}>
-              {item.resolved ? translate("markUnresolved") : translate("markResolved")}
+              {item.resolved
+                ? translate("markUnresolved")
+                : translate("markResolved")}
             </button>
-            <button onClick={() => removeItem(item.id)}>{translate("removeItem")}</button>
+            <button onClick={() => removeItem(item.id)}>
+              {translate("removeItem")}
+            </button>
           </li>
         ))}
       </ul>
