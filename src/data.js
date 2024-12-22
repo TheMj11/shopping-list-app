@@ -1,15 +1,16 @@
-// src/data.js
-export const shoppingListData = {
+export const shoppingListData = [
+  {
     id: 1,
-    name: "Můj nákupní seznam",
+    name: "Týdenní nákup",
+    items: [{ id: 1, name: "Mléko", resolved: false }],
+    members: ["user123"],
     owner: "user123",
-    members: ["user123", "user456"],
-    items: [
-      { id: 1, name: "Mléko", resolved: false },
-      { id: 2, name: "Chléb", resolved: false },
-      { id: 3, name: "Vejce", resolved: true },
-    ],
-  };
-  
-
-  
+  },
+  {
+    id: 2,
+    name: "Party nákup",
+    items: [{ id: 1, name: "Víno", resolved: true }],
+    members: ["user456"],
+    owner: "user456",
+  },
+];

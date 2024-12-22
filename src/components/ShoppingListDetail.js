@@ -1,14 +1,25 @@
 // src/components/ShoppingListDetail.js
-import React, { useState } from 'react';
-import { shoppingListData } from '../data';
-import './ShoppingListDetail.css'; // Import CSS
+import React, { useState } from "react";
+import { useParams } from "react-router-dom"; // Importujeme useParams
+import { shoppingListData } from "../data"; // Import dat
+import "./ShoppingListDetail.css"; // Import CSS
 
 function ShoppingListDetail() {
-  // Použití useState hooku pro uchování dat o nákupním seznamu
-  const [shoppingList, setShoppingList] = useState(shoppingListData);
+  const { id } = useParams(); // Získání ID seznamu z URL
+  const foundShoppingList = shoppingListData.find(
+    (list) => list.id.toString() === id
+  ); // Najdeme seznam podle ID
+
+  // Stavy jsou definované vždy, i když seznam neexistuje
+  const [shoppingList, setShoppingList] = useState(foundShoppingList || {});
   const [newItemName, setNewItemName] = useState("");
   const [newMemberName, setNewMemberName] = useState("");
-  const [showOnlyUnresolved, setShowOnlyUnresolved] = useState(false); // Nový stav pro filtrování
+  const [showOnlyUnresolved, setShowOnlyUnresolved] = useState(false);
+
+  // Pokud seznam neexistuje, zobrazíme chybovou hlášku
+  if (!foundShoppingList) {
+    return <p>Seznam nenalezen!</p>;
+  }
 
   // Přidání nové položky
   const addItem = () => {
@@ -26,7 +37,7 @@ function ShoppingListDetail() {
     }
   };
 
-  // Odebrání položky ze seznamu
+  // Odebrání položky
   const removeItem = (itemId) => {
     setShoppingList({
       ...shoppingList,
@@ -34,7 +45,7 @@ function ShoppingListDetail() {
     });
   };
 
-  // Označení položky jako vyřešené/nevyřešené
+  // Přepnutí stavu položky (vyřešené/nevyřešené)
   const toggleItemResolved = (itemId) => {
     setShoppingList({
       ...shoppingList,
@@ -44,7 +55,7 @@ function ShoppingListDetail() {
     });
   };
 
-  // Přidání nového člena do seznamu (jen vlastník může přidávat členy)
+  // Přidání nového člena
   const addMember = () => {
     if (shoppingList.owner === "user123" && newMemberName.trim() !== "") {
       setShoppingList({
@@ -55,7 +66,7 @@ function ShoppingListDetail() {
     }
   };
 
-  // Odebrání člena ze seznamu (jen vlastník může odebírat členy)
+  // Odebrání člena
   const removeMember = (memberName) => {
     setShoppingList({
       ...shoppingList,
@@ -63,18 +74,12 @@ function ShoppingListDetail() {
     });
   };
 
-  // Člen může odejít ze seznamu
-  const leaveList = (memberName) => {
-    setShoppingList({
-      ...shoppingList,
-      members: shoppingList.members.filter((member) => member !== memberName),
-    });
-  };
-
-  // Filtrování položek podle stavu (zda jsou vyřešené nebo nevyřešené)
-  const filteredItems = shoppingList.items.filter((item) =>
-    showOnlyUnresolved ? !item.resolved : true
-  );
+  // Filtrování položek
+  const filteredItems = shoppingList.items
+    ? shoppingList.items.filter((item) =>
+        showOnlyUnresolved ? !item.resolved : true
+      )
+    : [];
 
   return (
     <div className="shopping-list">
@@ -82,17 +87,15 @@ function ShoppingListDetail() {
 
       <h2>Členové:</h2>
       <ul>
-        {shoppingList.members.map((member) => (
-          <li key={member}>
-            {member}
-            {shoppingList.owner === "user123" && member !== "user123" && (
-              <button onClick={() => removeMember(member)}>Odebrat</button>
-            )}
-            {member !== shoppingList.owner && (
-              <button onClick={() => leaveList(member)}>Odejít</button>
-            )}
-          </li>
-        ))}
+        {shoppingList.members &&
+          shoppingList.members.map((member) => (
+            <li key={member}>
+              {member}
+              {shoppingList.owner === "user123" && member !== "user123" && (
+                <button onClick={() => removeMember(member)}>Odebrat</button>
+              )}
+            </li>
+          ))}
       </ul>
 
       {shoppingList.owner === "user123" && (

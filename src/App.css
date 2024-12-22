@@ -1,3 +1,4 @@
+/* Původní styly */
 .App {
   text-align: center;
 }
@@ -35,4 +36,174 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+/* Světlý a tmavý režim */
+.app {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app.light {
+  background-color: white;
+  color: black;
+}
+
+.app.dark {
+  background-color: black;
+  color: white;
+}
+
+/* Tlačítka */
+button {
+  padding: 10px 20px;
+  margin-bottom: 20px;
+  border: none;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+/* Styl pro hlavní obsah a karty */
+.shopping-list {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.shopping-list h1,
+.shopping-list h2,
+.shopping-list ul {
+  color: inherit;
+}
+
+.app.dark .shopping-list {
+  background-color: #333; /* Tmavě šedá pro tmavý režim */
+  color: white; /* Text v tmavém režimu bude bílý */
+}
+
+.app.light .shopping-list {
+  background-color: white; /* Bílá pro světlý režim */
+  color: black; /* Text v světlém režimu bude černý */
+}
+
+/* Styl pro dlaždice seznamů */
+.shopping-list-tile {
+  background-color: #f9f9f9;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.app.dark .shopping-list-tile {
+  background-color: #444; /* Tmavší šedá pro dlaždice v tmavém režimu */
+  color: white;
+}
+
+.app.light .shopping-list-tile {
+  background-color: #f9f9f9; /* Světle šedá pro světlý režim */
+  color: black;
+}
+
+/* Modální okno */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-width: 90%;
+  background-color: white; /* Světlý režim */
+  color: black;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  z-index: 1000;
+  text-align: center;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Tmavý režim pro celé okno */
+.app.dark .modal {
+  background-color: #444; /* Tmavší šedá pro tmavý režim */
+  color: white;
+}
+
+/* Styl pro nadpis v modálním okně */
+.modal h2 {
+  margin-top: 0;
+  font-size: 20px;
+  color: black; /* Stabilně černý text */
+}
+
+/* Vstupní pole uvnitř modálního okna */
+.modal input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  font-size: 14px;
+}
+
+.app.dark .modal input {
+  background-color: white; /* Pole zůstává bílé */
+  color: black; /* Text uvnitř zůstává černý */
+  border: 1px solid #777;
+}
+
+/* Tlačítka uvnitř modálního okna */
+.modal button {
+  margin: 5px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+}
+
+.modal button:hover {
+  background-color: #0056b3;
+}
+
+/* Styl pro seznam členů */
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+ul li {
+  color: inherit;
+  margin-bottom: 10px;
+}
+
+/* Styl pro checkbox a jeho popisek */
+label {
+  color: inherit; /* Dědí barvu textu podle aktuálního režimu */
+  font-size: 16px;
+}
+
+input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+/* Zajištění kontrastu v tmavém režimu */
+.app.dark label {
+  color: white; /* Text bude bílý v tmavém režimu */
+}
+
+.app.light label {
+  color: black; /* Text bude černý ve světlém režimu */
 }
