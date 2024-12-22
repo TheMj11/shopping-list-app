@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import ShoppingListsOverview from "./components/ShoppingListsOverview";
@@ -7,7 +8,7 @@ import "./App.css";
 
 function App() {
   const [theme, setTheme] = useState("light"); // Přidání stavu pro téma
-  const { language, setLanguage } = useLanguage(); // Přístup k jazykovému kontextu
+  const { language, setLanguage, translate } = useLanguage(); // Použití jazykového kontextu
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
@@ -22,7 +23,7 @@ function App() {
       <div className={`app ${theme}`}>
         {/* Tlačítko pro přepínání režimu */}
         <button onClick={toggleTheme}>
-          Přepnout na {theme === "light" ? "tmavý" : "světlý"} režim
+          {translate("toggleTheme")}
         </button>
 
         {/* Přepínač jazyka */}

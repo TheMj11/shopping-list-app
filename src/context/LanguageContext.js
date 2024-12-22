@@ -2,6 +2,7 @@ import React, { createContext, useState, useContext } from 'react';
 
 // Texty v češtině a angličtině
 // src/context/LanguageContext.js
+// src/context/LanguageContext.js
 const translations = {
   cs: {
     shoppingListsOverview: "Přehled nákupních seznamů",
@@ -25,6 +26,7 @@ const translations = {
     removeItem: "Odebrat položku",
     removeMember: "Odebrat člena",
     addItemPlaceholder: "Název položky",
+    toggleTheme: "Přepnout na tmavý režim", // Text pro přepínání tmavého režimu
   },
   en: {
     shoppingListsOverview: "Shopping Lists Overview",
@@ -48,6 +50,7 @@ const translations = {
     removeItem: "Remove Item",
     removeMember: "Remove Member",
     addItemPlaceholder: "Item Name",
+    toggleTheme: "Switch to Dark Mode", // Text pro přepínání tmavého režimu v angličtině
   },
 };
 
